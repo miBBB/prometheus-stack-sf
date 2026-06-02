@@ -1,0 +1,27 @@
+groups:
+  - name: lms_alerts
+    rules:
+
+      - alert: SiteStatusCodeChanged
+        expr: probe_success{instance="https://lms.skillfactory.ru"} == 0
+        for: 0s
+        labels:
+          severity: critical
+        annotations:
+          summary: "Сайт недоступен"
+
+      - alert: SiteResponseTooSlow
+        expr: probe_duration_seconds{instance="https://lms.skillfactory.ru"} > 1
+        for: 0s
+        labels:
+          severity: warning
+        annotations:
+          summary: "Сайт тормозит"
+
+      - alert: ServerRestarted
+        expr: node_boot_time_seconds{instance="node-exporter:9100"} > 1
+        for: 0s
+        labels:
+          severity: info
+        annotations:
+          summary: "Сервер перезагружен"
